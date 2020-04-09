@@ -8,10 +8,14 @@ class CUnionBase():
 
     C_TYPE_FIELDS = "uint32_t"
 
+    TEMPLETE_NAME = "R_{block_name}"
+
+    TEMPLETE_RAW_NAME = "union r_{block_name}"
+
     TEMPLETE_TYPEDEF = "\n".join([
-        "typedef union r_{name} {{",
+        "typedef {raw_name} {{",
         "{struct}",
-        "}} R_{name};"
+        "}} {name};"
     ])
 
     TEMPLETE_UNION = "\n".join([
@@ -36,6 +40,12 @@ class CUnionBase():
 
         return "\n".join([comment, struct, setter, getter])
 
+    def name(self):
+        return self.TEMPLETE_NAME.format(block_name = self._block.name())
+
+    def raw_name(self):
+        return self.TEMPLETE_RAW_NAME.format(block_name = self._block.name())
+
     def _gen_setter(self) -> str:
         """
         You can override this function
@@ -59,7 +69,8 @@ class CUnionBase():
         struct = self.__pack_block()
 
         return self.TEMPLETE_TYPEDEF.format(
-            name = name,
+            name = self.name(),
+            raw_name = self.raw_name(),
             struct = struct
         )
 
@@ -130,6 +141,11 @@ class CUnionBase():
             attrs = attrs,
             c_type = self.C_TYPE_FIELDS
         )
+
+
+class CUnionRaw(CUnionBase):
+    def _gen_setter(self): return ""
+    def _gen_getter(self): return ""
 
 class CGeneratorBase(GeneratorBase):
     def __init__(self, group: Group, create_union = None):
