@@ -222,7 +222,9 @@ class Group():
         self.reverse = False
 
     def __str__(self):
-        return "Group{name}".format(name = self._name)
+        return "Group{name}: {desc}".format(
+                name = self._name,
+                desc = self._desc)
 
     def add_block(self, block: Block):
         if not self._check(block):
