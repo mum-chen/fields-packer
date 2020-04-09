@@ -4,18 +4,22 @@ sys.path.append("../../")
 import os
 import csv
 import re
-from fields_packer import Field, Block, ParserBase, CGeneratorBase, CUnionBase
+from fields_packer import Field, Block
+from fields_packer import ParserBase, ParserWithNameDict
+from fields_packer import CGeneratorBase, CUnionBase
 
-class CsvParser(ParserBase):
+class CsvParserLike():
+    """
+    This class should be mixed with subclass of ParserBase()
+    """
     TYPE_EMPTYLINE = "EMPYY"
     TYPE_COMMENT   = "COMMENT"
     TYPE_ADDRESS   = "ADDRESS"
     TYPE_FIELD     = "FIELD"
     TYPE_UNKNOW    = "UNKNOW"
 
-    def __init__(self, csv_file, *arg, **kw):
+    def __init__(self, csv_file):
         self._csv = csv_file
-        super().__init__(*arg, **kw)
 
     def cal_row_type(self, row):
         if len(row) == row.count(""):
@@ -48,15 +52,15 @@ class CsvParser(ParserBase):
         )
         self._add_field(f)
 
-class SimpleCsvParser(CsvParser):
+class SimpleCsvParser(ParserBase, CsvParserLike):
     """
     You can implement your own _parser() with _add_field().
     """
     def __init__(self, csv_file):
-        super().__init__(
-            csv_file,
+        ParserBase.__init__(self,
             gname = "Simple",
             gdesc = "This is a simple demo")
+        CsvParserLike.__init__(self, csv_file)
 
     def _parser(self):
         with open(self._csv, "r") as csvfile:
@@ -71,7 +75,7 @@ class SimpleCsvParser(CsvParser):
                 # else ignore
 
 
-class ComplexCsvParser(CsvParser):
+class ComplexCsvParser(ParserWithNameDict, CsvParserLike):
     """
     You can override some functions to build group.
     - bcreator: modify default function for block
@@ -92,26 +96,11 @@ class ComplexCsvParser(CsvParser):
             addr_parser = addr_parser
         )
 
-        super().__init__(
-            csv_file,
+        ParserWithNameDict.__init__(self,
             gname = "AddressedBlock",
             gdesc = "This demo shows how to use block creator",
             bcreator = bcreator)
-
-        self._name_dict = dict()
-
-    def _find_block_name(self, baddr):
-        """
-        Change the defautl block name. It's useful when you want to give your
-        blocks some meaningful names.
-        """
-        name = self._name_dict.get(baddr, None)
-        if not name:
-            raise Exception("Illegal block address input")
-        return name.strip()
-
-    def _record_block_name(self, addr, row):
-        self._name_dict[addr] = row[2]
+        CsvParserLike.__init__(self, csv_file)
 
     def _parser(self):
         with open(self._csv, "r") as csvfile:
@@ -122,12 +111,12 @@ class ComplexCsvParser(CsvParser):
                 if row_type == self.TYPE_ADDRESS:
                     addr = self.extract_addr(row)
                     # XXX: record block here
-                    self._record_block_name(addr, row)
+                    self._register_block_name(addr, row[2])
                 elif row_type == self.TYPE_FIELD:
                     self.add_field(addr, row)
                 # else ignore
 
-class RawCsvParser(CsvParser):
+class RawCsvParser(ParserBase, CsvParserLike):
     """
     You can implement your own _parser() with _group.
 
@@ -136,10 +125,10 @@ class RawCsvParser(CsvParser):
     """
 
     def __init__(self, csv_file):
-        super().__init__(
-            csv_file,
+        ParserBase.__init__(self,
             gname = "Raw",
             gdesc = "This is a raw demo")
+        CsvParserLike.__init__(self, csv_file)
 
     def _parser(self):
         """
