@@ -354,3 +354,19 @@ class ParserBase():
         """
         raise NotImplementedError
 
+class ParserWithNameDict(ParserBase):
+    def __init__(self, *arg, **kw):
+        super().__init__(*arg, **kw)
+        self._name_dict = dict()
+
+    def _register_block_name(self, addr: Any, name: str) -> None:
+        if self._name_dict.get(addr, None) is not None:
+            raise ValueError(
+                "Duplicated block address input: {}, {}".format(addr, name))
+        self._name_dict[addr] = name.strip()
+
+    def _find_block_name(self, addr: Any):
+        name = self._name_dict.get(addr, None)
+        if not name:
+            raise ValueError("Not found block name for {}".format(addr))
+        return name
