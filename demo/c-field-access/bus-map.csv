@@ -1,0 +1,25 @@
+# This is a demo for continuous registers
+
+,# addr=0x0, CONFIG0
+,[15:0],cfg0
+
+,# addr=0x1, CONFIG1
+,[15:0],cfg1
+
+,# addr=0x2, CONFIG2
+,[15:0],cfg2
+
+,# addr=0x3, CONFIG3
+,[15:0],cfg3
+
+,# addr=0x4, CONFIG4
+,[15:0],cfg4
+
+,# addr=0x5, CONFIG5
+,[15:0],cfg5
+
+,# addr=0x6, CONFIG6
+,[15:0],cfg6
+
+,# addr=0x7, CONFIG7
+,[15:0],cfg7

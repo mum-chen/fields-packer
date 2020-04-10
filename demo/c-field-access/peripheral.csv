@@ -1,0 +1,19 @@
+# This is a demo for peripheral registers
+
+,# addr=(0x01 0x0000), A_CFG0
+,[15:0],acfg0
+
+,# addr=(0x01 0x0001), A_CFG1
+,[15:0],acfg1
+
+,# addr=(0x01 0x0002), A_CFG2
+,[15:0],acfg2
+
+,# addr=(0x2 0x0000), B_CFG0
+,[15:0],bcfg0
+
+,# addr=(0x2 0x0001), B_CFG1
+,[15:0],bcfg1
+
+,# addr=(0x2 0x0002), B_CFG2
+,[15:0],bcfg2

@@ -1,0 +1,23 @@
+# This is a demo for discontinuous registers
+
+,# addr=0x1000, DEVICE0_SET
+,[15:0],dev0_set
+
+,# addr=0x1001, DEVICE0_GET
+,[15:0],dev0_get
+
+,# addr=0x1002, DEVICE0_RESET
+,[2],dev0_clk_en
+,[1],dev0_stop
+,[0],dev0_reset
+
+,# addr=0x1100, DEVICE1_SET
+,[15:0],dev1_set
+
+,# addr=0x1101, DEVICE1_GET
+,[15:0],dev1_get
+
+,# addr=0x1102, DEVICE1_RESET
+,[2],dev1_clk_en
+,[1],dev1_stop
+,[0],dev1_reset
