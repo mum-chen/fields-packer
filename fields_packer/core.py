@@ -18,6 +18,17 @@ Field ... Field  | ......... | ....
 - Blocks in the same gruops have same `parser` and `generator`.
 """
 
+class Colors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 _Field = namedtuple("Field", [
     "name",
     "addr",
@@ -125,6 +136,7 @@ class BlockCreator():
 
         block.reverse = self._reverse
         return block
+
 
 class Block():
     BlockCreator = BlockCreator
@@ -257,6 +269,47 @@ class Group():
             return self.__checker(self, block)
         else:
             return True
+
+    @classmethod
+    def print_error(cls, s):
+        print(Colors.FAIL + s + Colors.ENDC)
+
+    @classmethod
+    def print_ok(cls, s):
+        print(Colors.OKGREEN + s + Colors.ENDC)
+
+    @classmethod
+    def check_duplicated(cls, desc, key_func, iterables, quiet = True):
+        d = dict()
+        for obj in iterables:
+            key = key_func(obj)
+            if key is None:
+                continue
+
+            ori = d.get(key, None)
+            if ori is not None:
+                err = "Duplicated Error {desc}: \n\t1. {o1}\n\t. {o2}"
+                cls.print_error(err.format(desc = desc, o1 = obj, o2 = ori))
+
+            d[key] = obj
+
+        if not quiet:
+            cls.print_ok("Check {desc} done".format(desc = desc))
+
+    @classmethod
+    def check_duplicated_name(cls, *groups):
+        blocks = list()
+        for group in groups:
+            blocks.extend(group.dump())
+
+        cls.check_duplicated("block name", lambda b: b.name(), blocks)
+        cls.check_duplicated("block address", lambda b: b.address(), blocks)
+
+        fields = list()
+        for block in blocks:
+            fields.extend(block.dump())
+
+        cls.check_duplicated("field name", lambda f: f.name, fields)
 
 
 class GeneratorBase():
