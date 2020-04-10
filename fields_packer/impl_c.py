@@ -152,11 +152,19 @@ class CGeneratorBase(GeneratorBase):
     def __init__(self, group: Group, create_union = None):
         self._group = group
         self._create_union = create_union or CUnionBase
+        self._blocks = None
+        self._unions = None
 
     def generate(self):
+        """
+        side effect: create self._blocks and self._unions
+        """
         blocks = self._group.dump()
         unions = list(map(lambda b: self._create_union(b), blocks))
         codes = list(map(lambda u: u.generate(), unions))
+
+        self._blocks = blocks
+        self._unions = unions
         return "\n".join(codes)
 
     @classmethod

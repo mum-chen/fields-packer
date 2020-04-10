@@ -104,13 +104,9 @@ class BusMapGenerator(CGeneratorBase):
         return "\n".join(codes)
 
     def generate(self):
-        blocks = self._group.dump()
-        unions = list(map(lambda b: self._create_union(b), blocks))
-        codes = list(map(lambda u: u.generate(), unions))
-
-        whole_bus = self._gen_whole_bus(unions)
-        codes.append(whole_bus)
-        return "\n".join(codes)
+        code = super().generate()
+        whole_bus = self._gen_whole_bus(self._unions)
+        return "\n".join([code, whole_bus])
 
 
 """
