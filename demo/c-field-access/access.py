@@ -292,15 +292,9 @@ class GenTop():
     @classmethod
     def gen_all(cls, output):
         out_file = "reg_all.h"
-        macro = ("__" + out_file.replace(".", "_") + "__").upper()
-
         path = os.path.join(output, out_file)
-        head = "\n".join([
-            "#ifndef {macro}",
-            "#define {macro}",
-        ]).format(macro = macro)
-        tail = "#endif /* {macro} */".format(macro = macro)
 
+        head, tail = CGeneratorBase.once_only_header(out_file)
 
         configs = (
             ("bus-map.csv", BusMapCsvParser, BusMapGenerator),

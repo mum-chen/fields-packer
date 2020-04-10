@@ -147,6 +147,7 @@ class CUnionRaw(CUnionBase):
     def _gen_setter(self): return ""
     def _gen_getter(self): return ""
 
+
 class CGeneratorBase(GeneratorBase):
     def __init__(self, group: Group, create_union = None):
         self._group = group
@@ -158,3 +159,17 @@ class CGeneratorBase(GeneratorBase):
         codes = list(map(lambda u: u.generate(), unions))
         return "\n".join(codes)
 
+    @classmethod
+    def once_only_header(cls, hfile_name):
+        """
+        @input hfile_name: format xxx_xxx.h
+        @output (head, tail)
+            return macros with #ifndef
+        """
+        flag = ("__" + hfile_name.replace(".", "_") + "__").upper()
+        head = "\n".join([
+            "#ifndef {flag}",
+            "#define {flag}",
+        ]).format(flag = flag)
+        tail = "#endif /* {flag} */".format(flag = flag)
+        return head, tail
