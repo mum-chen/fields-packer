@@ -281,6 +281,8 @@ class GenTop():
     def gen_code(cls, csv, parser, generator):
         parser = parser(csv)
         group = parser.gen_group()
+
+        Group.check_duplicated_name(group)
         gen = generator(group)
         code = gen.generate()
 
