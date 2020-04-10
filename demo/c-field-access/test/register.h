@@ -12,7 +12,7 @@
 	typeof(reg) _y; \
 	(void) (&_x == &_y); \
 	_register_write(name, reg.val); \
-} while(0)
+} while (0)
 
 #define register_create(r, v) REG(r) v = register_fetch(r)
 
@@ -21,7 +21,7 @@
 	register_create(name, __tmp_reg); \
 	__tmp_reg.field = value; \
 	register_apply(name, __tmp_reg); \
-} while(0)
+} while (0)
 
 
 /*
